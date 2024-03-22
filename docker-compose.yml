@@ -1,0 +1,37 @@
+version: '3.8'
+
+networks:
+  app-practice:
+    name: app-practice
+
+services:
+  app:
+    image: webdevops/php-nginx:8.2
+    container_name: app
+    restart: on-failure
+    working_dir: /app
+    ports:
+      - "90:80"
+    volumes:
+      - ./app:/app:rw
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+    depends_on:
+      - db-practice
+    networks:
+      - app-practice
+  
+  db-practice:
+    image: mysql:8.0
+    container_name: db-practice
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    volumes:
+      - ./database/db:/var/lib/mysql:rw
+    environment:
+      MYSQL_ROOT_PASSWORD: exito
+      MYSQL_DATABASE: dbpractice
+    ports:
+      - "3310:3306"
+    networks:
+      - app-practice
